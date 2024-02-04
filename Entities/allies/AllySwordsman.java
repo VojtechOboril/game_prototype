@@ -1,5 +1,5 @@
-package Entities.allies;
-import Entities.Entity;
+package entities.allies;
+import entities.Entity;
 
 public class AllySwordsman extends Entity{
 
@@ -7,6 +7,7 @@ public class AllySwordsman extends Entity{
         this.hp = 60;
         this.attack = 15;
         this.armor = 8;
+        this.name = "Swordsman";
     }
 
     @Override

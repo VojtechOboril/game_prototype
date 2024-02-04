@@ -15,7 +15,7 @@ public class MainScreen extends JPanel{
         newGameButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                cardLayout.show(cardPanel, "CraftersScreen");
+                cardLayout.show(cardPanel, "BattleScreen");
             }
         });
 

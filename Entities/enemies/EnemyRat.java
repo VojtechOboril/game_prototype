@@ -1,5 +1,5 @@
-package Entities.enemies;
-import Entities.Entity;;
+package entities.enemies;
+import entities.Entity;;
 
 public class EnemyRat extends Entity {
 
@@ -7,6 +7,7 @@ public class EnemyRat extends Entity {
         this.hp = 50;
         this.attack = 10;
         this.armor = 5;
+        this.name = "Rat";
     }
     
     @Override
