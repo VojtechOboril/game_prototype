@@ -7,10 +7,12 @@ import entities.Entity;
 
 public class GameValues {
     public int gold = 0;
-    public int currentFloor = 1;
+    public int currentFloor = 10;
     public ArrayList<Entity> heroes = new ArrayList<Entity>();
 
     public GameValues() {
-        heroes.add(new AllySwordsman());
+        for(int i = 0; i < 10; i++) {
+            heroes.add(new AllySwordsman());
+        }
     }
 }

@@ -2,8 +2,12 @@ package entities;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.Random;
 import java.awt.event.ActionEvent;
 
 import javax.swing.BorderFactory;
@@ -14,15 +18,20 @@ import javax.swing.SwingConstants;
 import javax.swing.Timer;
 
 public abstract class Entity {
-    protected float fatigue = 1;
-    protected float speed = 1;
-    protected boolean alive = true;
+    protected float fatigue = 10;
+    protected float speed = 10;
     protected int attack;
     protected int hp;
+    protected int maxHp;
     protected int armor;
     protected String name;
     protected JPanel panel;
     private JProgressBar progressBar;
+    public ArrayList<Entity> enemies = new ArrayList<Entity>();
+
+    public Entity() {
+        this.maxHp = this.hp;
+    }
     
     public abstract void useAbility(Entity target);
     
@@ -39,7 +48,7 @@ public abstract class Entity {
     }
     
     public boolean isAlive() {
-        return this.alive;
+        return this.hp > 0;
     }
 
     public float getSpeedWithFatigue() {
@@ -48,21 +57,38 @@ public abstract class Entity {
 
     public void getAttacked(int attack) {
         this.hp -= Math.max((int)(attack * attack / this.armor), 0);
+        panel.repaint();
     }
 
     public JPanel getRepresentation() {
-        this.panel = new JPanel();
+        this.panel = new JPanel() {
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+
+                // Set the color to red
+                g.setColor(Color.RED);
+
+                // Get the width and height of the panel
+                int width = getWidth();
+                int height = getHeight();
+
+                // Paint only the left part of the panel in red
+                g.fillRect(0, 0, (int)(width * (1.0-((float)hp/maxHp))), height);
+            }};
         this.panel.setLayout(new BorderLayout());
+        this.panel.setPreferredSize(new Dimension(80, 40));
 
         // Create a JLabel with the letter and center it in the JPanel
         JLabel label = new JLabel(String.valueOf(name.charAt(0)), SwingConstants.CENTER);
-        label.setFont(new Font("Arial", Font.PLAIN, 24)); // Adjust the font size as needed
+        label.setFont(new Font("Arial", Font.PLAIN, 12)); // Adjust the font size as needed
 
         // Set a border around the JLabel to represent the box
         label.setBorder(BorderFactory.createLineBorder(Color.BLACK));
 
         progressBar = new JProgressBar();
-        progressBar.setStringPainted(true);
+        progressBar.setPreferredSize(new Dimension(80, 10));
+        //progressBar.setStringPainted(true);
         panel.add(progressBar, BorderLayout.SOUTH);
 
         this.panel.add(label, BorderLayout.CENTER);
@@ -71,16 +97,31 @@ public abstract class Entity {
     }
 
     public void startProgressBarAnimation() {
-        Timer timer = new Timer((int)(getSpeedWithFatigue() * 10), new ActionListener() {
+        Timer timer = new Timer((int)(1), new ActionListener() {
             int progress = 0;
+            long startTime = System.nanoTime(), elapsedTime = 0;
+            int duration = (int)(getSpeedWithFatigue() * 100);
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (progress <= 100) {
+                if (progress < 100) {
                     progressBar.setValue(progress);
-                    progress++;
+                    elapsedTime = (System.nanoTime() - startTime)/1_000_000; // convert to ms
+                    progress = (int) (elapsedTime * 100)/(duration);
                 } else {
+                    startTime = System.nanoTime();
                     progress = 0;
+                    Random rand = new Random();
+                    if(enemies.size() > 0) {
+                        Entity chosenEnemy = enemies.get(rand.nextInt(enemies.size()));
+                        useAbility(chosenEnemy);
+                        if(chosenEnemy.hp <= 0) {
+                            enemies.remove(chosenEnemy);
+                        }
+                    } else {
+                        // Once all enemies die there is nothing more to attack
+                        ((Timer) e.getSource()).stop();
+                    }
                 }
                 // Once it dies, it stops doing stuff
                 if(!isAlive()) {

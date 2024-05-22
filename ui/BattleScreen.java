@@ -1,18 +1,13 @@
 package ui;
 
-import javax.swing.JButton;
 import javax.swing.JPanel;
 
 import game.GameValues;
 import entities.Entity;
 import entities.enemies.EnemyRat;
 
-import java.awt.BorderLayout;
 import java.awt.CardLayout;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.util.ArrayList;
@@ -39,17 +34,19 @@ public class BattleScreen extends JPanel {
         }
 
 
-        JPanel mainPanel = new JPanel(new GridLayout(2, 1));
+        JPanel mainPanel = new JPanel(new GridLayout(3, 1));
 
         // Add top panels
-        JPanel topPanel = new JPanel(new FlowLayout());
+        JPanel topPanel = new JPanel(new GridLayout(0, 5));
         for (JPanel panel : topPanels) {
             topPanel.add(panel);
         }
         mainPanel.add(topPanel);
 
+        mainPanel.add(new JPanel());
+
         // Add bottom panels
-        JPanel bottomPanel = new JPanel(new FlowLayout());
+        JPanel bottomPanel = new JPanel(new GridLayout(0, 5));
         for (JPanel panel : bottomPanels) {
             bottomPanel.add(panel);
         }
@@ -62,9 +59,11 @@ public class BattleScreen extends JPanel {
             @Override
             public void componentShown(ComponentEvent e) {
                 for(Entity a : gameValues.heroes) {
+                    a.enemies = enemies;
                     a.startProgressBarAnimation();
                 }
                 for(Entity a : enemies) {
+                    a.enemies = gameValues.heroes;
                     a.startProgressBarAnimation();
                 }
             }
