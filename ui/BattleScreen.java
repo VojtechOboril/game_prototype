@@ -3,8 +3,9 @@ package ui;
 import javax.swing.JPanel;
 
 import game.GameValues;
+import entities.AttackQueue;
 import entities.Entity;
-import entities.enemies.EnemyRat;
+import entities.foes.FoeRat;
 
 import java.awt.CardLayout;
 import java.awt.GridLayout;
@@ -14,22 +15,24 @@ import java.util.ArrayList;
 
 public class BattleScreen extends JPanel {
 
-    public BattleScreen(CardLayout cardLayout, JPanel cardPanel, GameValues gameValues) {
+    public BattleScreen(CardLayout cardLayout, JPanel cardPanel) {
 
         // Generating Enemies
-        ArrayList<Entity> enemies = new ArrayList<>();
-        for(int i = 0; i < gameValues.currentFloor; i++) {
-            enemies.add(new EnemyRat());
+        for(int i = 0; i < GameValues.currentFloor; i++) {
+            GameValues.addFoe(new FoeRat());
         }
+
+        GameValues.setStarterHeroes();
+        
         // Making them into JPanels
         ArrayList<JPanel> topPanels = new ArrayList<JPanel>();
-        for(Entity enemy : enemies) {
+        for(Entity enemy : GameValues.getFoes()) {
             topPanels.add(enemy.getRepresentation());
         }
 
         // Making allies into JPanles
         ArrayList<JPanel> bottomPanels = new ArrayList<JPanel>();
-        for(Entity ally : gameValues.heroes) {
+        for(Entity ally : GameValues.getHeroes()) {
             bottomPanels.add(ally.getRepresentation());
         }
 
@@ -58,14 +61,11 @@ public class BattleScreen extends JPanel {
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentShown(ComponentEvent e) {
-                for(Entity a : gameValues.heroes) {
-                    a.enemies = enemies;
-                    a.startProgressBarAnimation();
-                }
-                for(Entity a : enemies) {
-                    a.enemies = gameValues.heroes;
-                    a.startProgressBarAnimation();
-                }
+                ArrayList<Entity> allEntities = new ArrayList<>(GameValues.getHeroes()) {{
+                    addAll(GameValues.getFoes());
+                }};
+                AttackQueue aq = new AttackQueue(allEntities);
+                aq.start();
             }
         });
 

@@ -12,7 +12,6 @@ class Main {
     private CardLayout cardLayout;
     
     public Main() {
-        GameValues gameValues = new GameValues();
         frame = new JFrame("Game Prototype");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -21,7 +20,7 @@ class Main {
         cardPanel.setLayout(cardLayout);
 
         cardPanel.add(new MainScreen(cardLayout, cardPanel), "MainScreen");
-        cardPanel.add(new BattleScreen(cardLayout, cardPanel, gameValues), "BattleScreen");
+        cardPanel.add(new BattleScreen(cardLayout, cardPanel), "BattleScreen");
 
 
         cardLayout.show(cardPanel, "MainScreen");

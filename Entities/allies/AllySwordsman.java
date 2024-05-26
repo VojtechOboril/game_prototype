@@ -1,7 +1,8 @@
 package entities.allies;
 import entities.Entity;
+import entities.Sides;
 
-public class AllySwordsman extends Entity{
+public class AllySwordsman extends Entity {
 
     public AllySwordsman() {
         this.hp = 60;
@@ -9,6 +10,7 @@ public class AllySwordsman extends Entity{
         this.attack = 15;
         this.armor = 8;
         this.name = "Swordsman";
+        this.side = Sides.HEROES;
     }
 
     @Override
