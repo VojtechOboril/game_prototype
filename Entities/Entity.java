@@ -53,6 +53,7 @@ public abstract class Entity {
 
     public void getAttacked(int attack) {
         this.hp -= Math.max((int)(attack * attack / this.armor), 0);
+        if (this.hp < 0) this.hp = 0;  // Ensure hp doesn't go below 0
         panel.repaint();
     }
 
@@ -80,18 +81,21 @@ public abstract class Entity {
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
 
-                // Set the color to red
-                g.setColor(Color.RED);
-
                 // Get the width and height of the panel
                 int width = getWidth();
                 int height = getHeight();
 
-                // Paint only the left part of the panel in red
-                g.fillRect(0, 0, (int)(width * (1.0-((float)hp/maxHp))), height);
+                // Paint the remaining HP portion
+                g.setColor(Color.RED);
+                g.fillRect(0, 0, width, height);
+
+                // Paint the lost HP portion
+                g.setColor(getBackground());
+                g.fillRect(width, 0, -(int)(width * ((float)hp / maxHp)), height);
             }};
         this.panel.setLayout(new BorderLayout());
         this.panel.setPreferredSize(new Dimension(80, 40));
+        this.panel.setBackground(Color.GREEN);  // Background color for HP bar
 
         // Create a JLabel with the letter and center it in the JPanel
         JLabel label = new JLabel(String.valueOf(name.charAt(0)), SwingConstants.CENTER);

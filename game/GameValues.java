@@ -18,6 +18,7 @@ public class GameValues {
     private static Random rand = new Random();
 
     public static void setStarterHeroes() {
+        GameValues.heroes.clear();
         for(int i = 0; i < 10; i++) {
             GameValues.addHero(new AllySwordsman());
         }

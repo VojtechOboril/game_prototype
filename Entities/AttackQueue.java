@@ -3,6 +3,7 @@ package entities;
 import javax.swing.*;
 
 import game.GameValues;
+import ui.BattleScreen;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -11,9 +12,12 @@ import java.util.List;
 public class AttackQueue {
     private List<Entity> entities;
     private Timer timer;
+    private BattleScreen bs;
+    private Boolean fightEnded;
 
-    public AttackQueue(List<Entity> entities) {
+    public AttackQueue(List<Entity> entities, BattleScreen bs) {
         this.entities = entities;
+        this.bs = bs;
         initializeTimer();
     }
 
@@ -39,17 +43,22 @@ public class AttackQueue {
                     }
                     else {
                         ((Timer) e.getSource()).stop(); // Stop the timer if no entities are left
+                        fightEnded = true;
                     }
                 }
+                if(fightEnded)
+                    bs.nextLevel();
             }
         });
     }
 
     public void start() {
+        this.fightEnded = false;
         timer.start();
     }
 
     public void stop() {
         timer.stop();
+        bs.nextLevel();
     }
 }
